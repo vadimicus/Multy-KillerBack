@@ -8,6 +8,7 @@ import (
 )
 
 const (
+	PORT = ":5555"
 	room_wireless = "wireless"
 	event_connection = "connection"
 )
@@ -19,9 +20,10 @@ func main() {
 	}
 	server.On(event_connection, func(so socketio.Socket) {
 		log.Println("on connection")
-		log.Printf("Some data:", so.Id(), so.Request(), so)
+		log.Printf("So id:", so.Id())
+		log.Printf("So request", so.Request().GetBody)
 		so.Join(room_wireless)
-		log.Printf("Some data:", so.Id(), so.Request(), so)
+		//log.Printf("Some data:", so.Id(), so.Request(), so)
 
 
 		so.On("chat message", func(msg string) {
@@ -30,7 +32,7 @@ func main() {
 			so.BroadcastTo("chat", "chat message", msg)
 		})
 		so.On("disconnection", func() {
-			log.Printf("Some data:", so.Id(), so.Request(), so)
+			log.Printf("So id:", so.Id())
 			log.Println("on disconnect")
 		})
 	})
@@ -41,6 +43,6 @@ func main() {
 
 	http.Handle("/socket.io/", server)
 	//http.Handle("/", http.FileServer(http.Dir("./asset")))
-	log.Println("Serving at localhost:5000...")
-	log.Fatal(http.ListenAndServe(":5555", nil))
+	log.Println("Serving at localhost" + PORT)
+	log.Fatal(http.ListenAndServe(PORT, nil))
 }
