@@ -8,7 +8,8 @@ import (
 )
 
 const (
-	
+	room_wireless = "wireless"
+	event_connection = "connection"
 )
 
 func main() {
@@ -16,18 +17,25 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	server.On("connection", func(so socketio.Socket) {
+	server.On(event_connection, func(so socketio.Socket) {
 		log.Println("on connection")
-		so.Join("wireless")
+		log.Printf("Some data:", so.Id(), so.Request(), so)
+		so.Join(room_wireless)
+		log.Printf("Some data:", so.Id(), so.Request(), so)
+
+
 		so.On("chat message", func(msg string) {
+			log.Printf("Some data:", so.Id(), so.Request(), so)
 			log.Println("emit:", so.Emit("chat message", msg))
 			so.BroadcastTo("chat", "chat message", msg)
 		})
 		so.On("disconnection", func() {
+			log.Printf("Some data:", so.Id(), so.Request(), so)
 			log.Println("on disconnect")
 		})
 	})
 	server.On("error", func(so socketio.Socket, err error) {
+		log.Printf("Some data:", so.Id(), so.Request(), so)
 		log.Println("error:", err)
 	})
 
