@@ -8,10 +8,10 @@ import (
 )
 
 const (
-	PORT = ":5555"
-	ROOM_WIRELESS = "wireless"
-	EVENT_CONNECTION = "connection"
-	EVENT_RECEIVER_ON = "event:receiver:on"
+	PORT                 = ":5555"
+	ROOM_WIRELESS        = "wireless"
+	EVENT_CONNECTION     = "connection"
+	EVENT_RECEIVER_ON    = "event:receiver:on"
 	EVENT_RECEIVER_ON_OK = "event:receiver:on:ok"
 	EVENT_RECEIVER_OFF = "event:receiver:off"
 	EVENT_SENDER_ON = "event:sender:on"
@@ -30,7 +30,6 @@ func main() {
 		log.Printf("So request", so.Request().GetBody)
 		so.Join(ROOM_WIRELESS)
 		//log.Printf("Some data:", so.Id(), so.Request(), so)
-
 
 		so.On(EVENT_RECEIVER_ON, func(data interface{} ) string {
 			log.Printf("So id Event RECEIVER ON:", so.Id())
