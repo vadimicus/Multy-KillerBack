@@ -5,11 +5,12 @@ import (
 	"net/http"
 
 	"github.com/googollee/go-socket.io"
+	"github.com/jekabolt/Multy-KillerBack/store"
 )
 
-const (
-	
-)
+const ()
+
+var WaitToRecieve map[string]store.RecieveOffer
 
 func main() {
 	server, err := socketio.NewServer(nil)
