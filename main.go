@@ -29,6 +29,7 @@ func main() {
 		log.Printf("So id:", so.Id())
 		log.Printf("So request", so.Request().GetBody)
 		so.Join(ROOM_WIRELESS)
+		so.Emit("hi", "HI JACK!")
 		//log.Printf("Some data:", so.Id(), so.Request(), so)
 
 		so.On(EVENT_RECEIVER_ON, func(data interface{} ) string {
