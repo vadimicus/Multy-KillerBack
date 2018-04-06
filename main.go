@@ -84,7 +84,7 @@ func main() {
 			//Try to find Sender
 			for _,sender := range senders{
 				if sender.UserCode == receiver.UserCode{
-					so.BroadcastTo(ROOM_WIRELESS, EVENT_NEW_RECEIVER, receiver)
+					so.BroadcastTo(ROOM_WIRELESS, EVENT_NEW_RECEIVER, "HEY")
 				}
 			}
 
@@ -117,7 +117,7 @@ func main() {
 
 			sender:= Sender{UserCode:user_code, Id:user_id }
 
-			so.BroadcastTo(ROOM_WIRELESS, EVENT_NEW_RECEIVER, sender)
+			so.BroadcastTo(ROOM_WIRELESS, EVENT_NEW_RECEIVER, "HEyyyy")
 
 			var senderExist bool = false
 
@@ -135,7 +135,8 @@ func main() {
 			// try to find Receiver by the code
 			receiver, ok := receivers[sender.UserCode]
 			if ok{
-				so.BroadcastTo(ROOM_WIRELESS, EVENT_NEW_RECEIVER, receiver)
+				receiver.Id = "new ID"
+				so.BroadcastTo(ROOM_WIRELESS, EVENT_NEW_RECEIVER, "Heeey")
 			} else{
 				var senderExist bool = false
 
