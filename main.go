@@ -60,9 +60,12 @@ func main() {
 
 			parsed := data.(map[string]interface{})
 			user_id:= parsed["user_id"].(string)
-			user_code:= parsed["user_code"].(int)
-			currency_id := parsed["currency_id"].(int)
-			amount := parsed["amount"].(int64)
+			raw_code:= parsed["user_code"].(float64)
+			user_code := int(raw_code)
+			raw_currency_id := parsed["currency_id"].(float64)
+			currency_id := int(raw_currency_id)
+			raw_amount := parsed["amount"].(float64)
+			amount := int64(raw_amount)
 
 			receiver := Receiver{
 				Id:user_id,
@@ -105,7 +108,8 @@ func main() {
 			//map[string]interface {}=map[user_id:Vadddim user_code:3252])
 			parsed := data.(map[string]interface{})
 			user_id:= parsed["user_id"].(string)
-			user_code:= parsed["user_code"].(int)
+			raw_code:= parsed["user_code"].(float64)
+			user_code := int(raw_code)
 
 
 
