@@ -120,6 +120,9 @@ func main() {
 
 			sender:= Sender{UserCode:user_code, Id:user_id, Socket:&so }
 
+			socket := *sender.Socket
+			socket.Emit(EVENT_NEW_RECEIVER, sender)
+
 			var senderExist bool = false
 
 			for _, cachedSender:= range senders{
