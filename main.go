@@ -49,8 +49,9 @@ func main() {
 		log.Println("on connection")
 		log.Printf("So id:", so.Id())
 		log.Printf("So request", so.Request().GetBody)
+
 		so.Join(ROOM_WIRELESS)
-		so.Emit("hi", "HI JACK!")
+		so.BroadcastTo(ROOM_WIRELESS, EVENT_NEW_RECEIVER, "HEYYYS can brodcast")
 		//log.Printf("Some data:", so.Id(), so.Request(), so)
 
 		so.On(EVENT_RECEIVER_ON, func(data interface{} ) string {
@@ -174,13 +175,18 @@ func main() {
 		so.On("disconnection", func() {
 			log.Printf("So id:", so.Id())
 			log.Println("on disconnect")
-			//TODO add disconnect socket user logic 
+			//TODO add disconnect socket user logic
 		})
 	})
 	server.On("error", func(so socketio.Socket, err error) {
 		log.Printf("Some data:", so.Id(), so.Request(), so)
 		log.Println("error:", err)
 	})
+
+
+
+
+
 
 	http.Handle("/socket.io/", server)
 	//http.Handle("/", http.FileServer(http.Dir("./asset")))
