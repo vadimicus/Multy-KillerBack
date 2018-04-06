@@ -74,7 +74,7 @@ func main() {
 
 
 			//map[string]interface {}=map[user_id:Vadddim user_code:3252])
-			parsed := data.(map[string]interface)
+			parsed := data.(map[string]interface{})
 			user_id:= parsed["user_id"]
 			user_code:= parsed["user_code"]
 
