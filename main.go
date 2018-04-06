@@ -12,18 +12,39 @@ const (
 	ROOM_WIRELESS        = "wireless"
 	EVENT_CONNECTION     = "connection"
 	EVENT_RECEIVER_ON    = "event:receiver:on"
-	EVENT_RECEIVER_ON_OK = "event:receiver:on:ok"
+	//EVENT_RECEIVER_ON_OK = "event:receiver:on:ok"
 	EVENT_RECEIVER_OFF = "event:receiver:off"
 	EVENT_SENDER_ON = "event:sender:on"
 	EVENT_SENDER_OFF = "event:sender:off"
 	EVENT_SENDER_UPDATE = "event:sender:update"
 )
 
+
+
+
+type Receiver struct {
+	Id			string		`json:"user_id"`
+	CurrencyId	int			`json:"currency_id"`
+	Amount		int64		`json:"amount"`
+	UserCode	int			`json:"user_code"`
+	Socker		*socketio.Socket
+}
+
+type Sender struct {
+	Id			string		`json:"user_id"`
+	UserCode	int			`json:"user_code"`
+	Socker		*socketio.Socket
+}
+
 func main() {
 	server, err := socketio.NewServer(nil)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	//receivers := make(map[int]Receiver)
+	//senders := make(map[int]Sender)
+
 	server.On(EVENT_CONNECTION, func(so socketio.Socket) {
 		log.Println("on connection")
 		log.Printf("So id:", so.Id())
@@ -50,7 +71,24 @@ func main() {
 
 		so.On(EVENT_SENDER_ON, func(data interface{} ) string {
 			log.Printf("Sender become on:", so.Id())
-			//TODO add sender connect logic here
+			//TODO parse client from WS and add it to the map
+
+			//sender := Sender{}
+
+
+
+			//senders[client.UserCode]=client
+			//TODO try to find Receiver by the code
+			//receiver, ok := receivers[sender.UserCode]
+			//if ok{
+				//TODO send reciver to sender
+				//TODO and remove this boolshit
+				//receiver.UserCode = client.UserCode
+			//} else{
+				//there is still noreceiver
+
+			//}
+
 			return "hello sender"
 		})
 
