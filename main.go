@@ -26,13 +26,13 @@ type Receiver struct {
 	CurrencyId	int			`json:"currency_id"`
 	Amount		int64		`json:"amount"`
 	UserCode	int			`json:"user_code"`
-	Socket		*socketio.Socket
+	RoomId		string
 }
 
 type Sender struct {
 	Id			string		`json:"user_id"`
 	UserCode	int			`json:"user_code"`
-	Socket		*socketio.Socket
+	RoomId		string
 }
 
 func main() {
@@ -49,7 +49,7 @@ func main() {
 		log.Println("on connection")
 		log.Printf("So id:", so.Id())
 		log.Printf("So request", so.Request().GetBody)
-		so.Join(ROOM_WIRELESS)
+
 		so.Emit("hi", "HI JACK!")
 		//log.Printf("Some data:", so.Id(), so.Request(), so)
 
@@ -57,6 +57,7 @@ func main() {
 			log.Printf("So id Event RECEIVER ON:", so.Id())
 			log.Printf("DAta:", data)
 			//so.Emit(EVENT_RECEIVER_ON_OK, "nice job maaan ;)")
+			so.Join(so.Id())
 
 			parsed := data.(map[string]interface{})
 			user_id:= parsed["user_id"].(string)
@@ -72,7 +73,7 @@ func main() {
 				UserCode:user_code,
 				CurrencyId:currency_id,
 				Amount:amount,
-				Socket: &so,
+				RoomId:so.Id(),
 			}
 
 
@@ -84,9 +85,7 @@ func main() {
 			//Try to find Sender
 			for _,sender := range senders{
 				if sender.UserCode == receiver.UserCode{
-					socket := *sender.Socket
-					socket.Emit(EVENT_NEW_RECEIVER, receiver)
-					//sender.Socket.Emit("GOT_YOUR_RECEIVER", receiver)
+					so.BroadcastTo(sender.RoomId, EVENT_NEW_RECEIVER, receiver)
 				}
 			}
 
@@ -104,7 +103,6 @@ func main() {
 		so.On(EVENT_SENDER_ON, func(data interface{} ) string {
 			log.Printf("Sender become on:", so.Id())
 
-
 			//map[string]interface {}=map[user_id:Vadddim user_code:3252])
 			parsed := data.(map[string]interface{})
 			user_id:= parsed["user_id"].(string)
@@ -118,10 +116,9 @@ func main() {
 
 
 
-			sender:= Sender{UserCode:user_code, Id:user_id, Socket:&so }
+			sender:= Sender{UserCode:user_code, Id:user_id, RoomId:so.Id() }
 
-			socket := *sender.Socket
-			socket.Emit(EVENT_NEW_RECEIVER, sender)
+			so.BroadcastTo(sender.RoomId, EVENT_NEW_RECEIVER, sender)
 
 			var senderExist bool = false
 
@@ -139,8 +136,7 @@ func main() {
 			// try to find Receiver by the code
 			receiver, ok := receivers[sender.UserCode]
 			if ok{
-				socket := *sender.Socket
-				socket.Emit(EVENT_NEW_RECEIVER, receiver)
+				so.BroadcastTo(sender.RoomId, EVENT_NEW_RECEIVER, receiver)
 			} else{
 				var senderExist bool = false
 
