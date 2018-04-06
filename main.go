@@ -26,13 +26,13 @@ type Receiver struct {
 	CurrencyId	int			`json:"currency_id"`
 	Amount		int64		`json:"amount"`
 	UserCode	int			`json:"user_code"`
-	RoomId		string
+
 }
 
 type Sender struct {
 	Id			string		`json:"user_id"`
 	UserCode	int			`json:"user_code"`
-	RoomId		string
+
 }
 
 func main() {
@@ -49,7 +49,7 @@ func main() {
 		log.Println("on connection")
 		log.Printf("So id:", so.Id())
 		log.Printf("So request", so.Request().GetBody)
-
+		so.Join(ROOM_WIRELESS)
 		so.Emit("hi", "HI JACK!")
 		//log.Printf("Some data:", so.Id(), so.Request(), so)
 
@@ -73,7 +73,6 @@ func main() {
 				UserCode:user_code,
 				CurrencyId:currency_id,
 				Amount:amount,
-				RoomId:so.Id(),
 			}
 
 
@@ -85,7 +84,7 @@ func main() {
 			//Try to find Sender
 			for _,sender := range senders{
 				if sender.UserCode == receiver.UserCode{
-					so.BroadcastTo(sender.RoomId, EVENT_NEW_RECEIVER, receiver)
+					so.BroadcastTo(ROOM_WIRELESS, EVENT_NEW_RECEIVER, receiver)
 				}
 			}
 
@@ -116,9 +115,9 @@ func main() {
 
 
 
-			sender:= Sender{UserCode:user_code, Id:user_id, RoomId:so.Id() }
+			sender:= Sender{UserCode:user_code, Id:user_id }
 
-			so.BroadcastTo(sender.RoomId, EVENT_NEW_RECEIVER, sender)
+			so.BroadcastTo(ROOM_WIRELESS, EVENT_NEW_RECEIVER, sender)
 
 			var senderExist bool = false
 
@@ -136,7 +135,7 @@ func main() {
 			// try to find Receiver by the code
 			receiver, ok := receivers[sender.UserCode]
 			if ok{
-				so.BroadcastTo(sender.RoomId, EVENT_NEW_RECEIVER, receiver)
+				so.BroadcastTo(ROOM_WIRELESS, EVENT_NEW_RECEIVER, receiver)
 			} else{
 				var senderExist bool = false
 
