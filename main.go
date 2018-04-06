@@ -71,6 +71,15 @@ func main() {
 
 		so.On(EVENT_SENDER_ON, func(data interface{} ) string {
 			log.Printf("Sender become on:", so.Id())
+
+			parsed, ok := data.(Sender)
+			if ok{
+				log.Printf("God data from sender:", parsed)
+			} else {
+				log.Printf("Something went wrong from sender:", data)
+			}
+
+
 			//TODO parse client from WS and add it to the map
 
 			//sender := Sender{}
