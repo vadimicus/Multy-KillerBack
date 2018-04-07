@@ -4,6 +4,8 @@ import (
 	"log"
 	"net/http"
 	"github.com/googollee/go-socket.io"
+	"github.com/graarh/golang-socketio"
+	"github.com/graarh/golang-socketio/transport"
 )
 
 const (
@@ -36,6 +38,69 @@ type Sender struct {
 }
 
 func main() {
+
+
+	initGoogleeSockets()
+	//initGoogleeSockets()
+
+
+}
+
+func initGraarhSockets()  {
+	server := gosocketio.NewServer(transport.GetDefaultWebsocketTransport())
+
+	type User struct {
+		Socket *gosocketio.Channel
+		Id 		string
+	}
+
+
+	user := User{Id:"Vadim Test"}
+
+	//handle connected
+	server.On(gosocketio.OnConnection, func(c *gosocketio.Channel) {
+		log.Println("New client connected")
+		//join them to room
+
+		user.Socket = c
+		c.Join(ROOM_WIRELESS)
+
+
+		c.BroadcastTo(ROOM_WIRELESS, EVENT_NEW_RECEIVER, "This is message from the rooom")
+
+
+
+
+	})
+
+
+
+
+	type Message struct {
+		Name string `json:"name"`
+		Message string `json:"message"`
+
+	}
+
+	//handle custom event
+	server.On(EVENT_SENDER_ON, func(c *gosocketio.Channel, msg Message) string {
+		//send event to all in room
+		//c.BroadcastTo("chat", "message", msg)
+
+		user.Socket.Emit(EVENT_NEW_RECEIVER, "Send from Sender On")
+
+		return "OK"
+	})
+
+	//setup http server
+	serveMux := http.NewServeMux()
+	serveMux.Handle("/socket.io/", server)
+	log.Panic(http.ListenAndServe(PORT, serveMux))
+}
+
+
+func initGoogleeSockets(){
+
 	server, err := socketio.NewServer(nil)
 	if err != nil {
 		log.Fatal(err)
