@@ -59,21 +59,42 @@ func initGraarhSockets()  {
 	receivers := make(map[string]Receiver)
 	senders := []Sender{}
 
-	user := User{Id:"Vadim Test"}
+	//user := User{Id:"Vadim Test"}
 
 	//handle connected
 	server.On(gosocketio.OnConnection, func(c *gosocketio.Channel) {
-		log.Println("New client connected")
+		log.Println("New client connected:", c.Id())
+		log.Printf("INITIAL ARRAY\n SENDERS: %v \n RECEIVERS:%v", len(senders), len(receivers))
 		//join them to room
 
-		user.Socket = c
+		//user.Socket = c
 		c.Join(ROOM_WIRELESS)
+		//c.BroadcastTo(ROOM_WIRELESS, EVENT_NEW_RECEIVER, "This is message from the rooom")
+
+	})
 
 
-		c.BroadcastTo(ROOM_WIRELESS, EVENT_NEW_RECEIVER, "This is message from the rooom")
+	server.On(gosocketio.OnDisconnection, func(c *gosocketio.Channel) {
+		log.Printf("Client Disconnected", c.Id())
 
+		log.Printf("INITIAL ARRAY\n SENDERS: %v \n RECEIVERS:%v", len(senders), len(receivers))
 
+		for _, receiver:= range receivers{
+			if receiver.Socket.Id() == c.Id(){
+				delete(receivers, receiver.UserCode)
+				continue
+			}
+		}
 
+		for i, sender:=range  senders{
+			if sender.Socket.Id() == c.Id(){
+				senders = append(senders[:i], senders[i+1:]...)
+				continue
+			}
+
+		}
+
+		log.Printf("FINAL ARRAY\n SENDERS: %v \n RECEIVERS:%v", len(senders), len(receivers))
 
 	})
 
