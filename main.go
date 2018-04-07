@@ -40,7 +40,7 @@ type Sender struct {
 func main() {
 
 
-	initGoogleeSockets()
+	initGraarhSockets()
 	//initGoogleeSockets()
 
 
@@ -95,6 +95,7 @@ func initGraarhSockets()  {
 	//setup http server
 	serveMux := http.NewServeMux()
 	serveMux.Handle("/socket.io/", server)
+	log.Println("Serving at localhost" + PORT)
 	log.Panic(http.ListenAndServe(PORT, serveMux))
 }
 
