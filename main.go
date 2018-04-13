@@ -18,6 +18,8 @@ const (
 	EVENT_RECEIVER_OFF = "event:receiver:off"
 	EVENT_SENDER_ON = "event:sender:on"
 	EVENT_SENDER_UPDATE = "event:sender:update"
+	EVENT_PAY = "event:pay"
+	EVENT_PAYMENT_SEND = "event:payment:send"
 )
 
 
@@ -176,14 +178,9 @@ func initGraarhSockets()  {
 		// try to find Receiver by the code
 		receiver, ok := receivers[sender.UserCode]
 		if ok{
-			receiver.Id = "new ID"
 			sender.Socket.Emit(EVENT_NEW_RECEIVER, receiver)
 
 		} else{
-			//TODO remove this shit
-			hardcodeSend := Receiver{UserCode:"32423", Id:"awesome id", Amount:234234, CurrencyId:2,Socket:c}
-			sender.Socket.Emit(EVENT_NEW_RECEIVER, hardcodeSend)
-
 			var senderExist bool = false
 
 			for _, cachedSender:= range senders{
@@ -200,7 +197,27 @@ func initGraarhSockets()  {
 
 		}
 
-		return "OK"
+		return "ok"
+	})
+
+
+	type PaymentData struct {
+		FromId		string		`json:"from_id"`
+		ToId		string		`json:"to_id"`
+		CurrencyId	int			`json:"currency_id"`
+		Amount		int64		`json:"amount"`
+	}
+
+	server.On(EVENT_PAY, func(c *gosocketio.Channel, data PaymentData ) string {
+		receiver, ok := receivers[data.ToId]
+		if (ok){
+			//receiver is exist and we should notify him about the payment
+			receiver.Socket.Emit(EVENT_PAYMENT_SEND, data)
+		} else {
+			return "fail"
+		}
+
+		return "ok"
 	})
 
 	//setup http server
