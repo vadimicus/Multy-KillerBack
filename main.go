@@ -11,15 +11,17 @@ import (
 const (
 	PORT                 = ":5555"
 	ROOM_WIRELESS        = "wireless"
-	EVENT_CONNECTION     = "connection"
+	//EVENT_CONNECTION     = "connection"
 	EVENT_RECEIVER_ON    = "event:receiver:on"
 	EVENT_NEW_RECEIVER	 = "event:new:receiver"
 	//EVENT_RECEIVER_ON_OK = "event:receiver:on:ok"
-	EVENT_RECEIVER_OFF = "event:receiver:off"
+	//EVENT_RECEIVER_OFF = "event:receiver:off"
 	EVENT_SENDER_ON = "event:sender:on"
-	EVENT_SENDER_UPDATE = "event:sender:update"
+	//EVENT_SENDER_UPDATE = "event:sender:update"
 	EVENT_PAY = "event:pay"
 	EVENT_PAYMENT_SEND = "event:payment:send"
+
+	CODE_VERSION = "0.0.1"
 )
 
 
@@ -107,7 +109,7 @@ func initGraarhSockets()  {
 		Id			string		`json:"user_id"`
 		CurrencyId	int			`json:"currency_id"`
 		Amount		int64		`json:"amount"`
-		UserCode	string			`json:"user_code"`
+		UserCode	string		`json:"user_code"`
 
 	}
 
@@ -142,7 +144,7 @@ func initGraarhSockets()  {
 		}
 
 
-		return "OK"
+		return "ok"
 	})
 
 	type SenderInData struct {
@@ -224,6 +226,7 @@ func initGraarhSockets()  {
 	serveMux := http.NewServeMux()
 	serveMux.Handle("/socket.io/", server)
 	log.Println("Serving at localhost" + PORT)
+	log.Printf("Code version: %v", CODE_VERSION)
 	log.Panic(http.ListenAndServe(PORT, serveMux))
 }
 
